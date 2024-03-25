@@ -2,6 +2,13 @@
 
 
 
+#' this is not for the user, only for the author and must be later deleted from here
+#'
+#' @param profilelength
+#'
+#' @return
+#'
+#' @examples
 changelengthofprofile <- function(profilelength){
 
   expression <- "extend(\r\n   make_line(\r\n      $geometry,\r\n       project (\r\

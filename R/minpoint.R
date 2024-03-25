@@ -10,7 +10,7 @@
 #' @export
 #'
 #' @examples
-minpoint <- function(raster, tracks, distance_points_along_line = 1) {
+minpoint <- function(raster, tracks, distance_points_along_line = 1, profilelength = 1) {
 
 
 
@@ -29,14 +29,26 @@ minpoint <- function(raster, tracks, distance_points_along_line = 1) {
 
   #geometry by expression = GBE ## this creates vertical lines on each point of pag and its original path going through it
   #https://gis.stackexchange.com/questions/380361/creating-perpendicular-lines-on-line-using-qgis
+
+  expression <- "extend(\r\n   make_line(\r\n      $geometry,\r\n       project (\r\
+        \n          $geometry, \r\n          tobechanged, \r\n          radians(\"angle\"-90))\r\
+        \n        ),\r\n   tobechanged,\r\n   0\r\n)"
+
+
+  profilelengthhalf <- profilelength/2
+
+  newexpression <- gsub('tobechanged', profilelengthhalf, expression)
+
+
+
+  #trackRcheck::changelengthofprofile(profilelength)
   profiles <- qgis_run_algorithm(
     algorithm = "native:geometrybyexpression",
     INPUT = pag,
-    EXPRESSION = "extend(\r\n   make_line(\r\n      $geometry,\r\n       project (\r\
-        \n          $geometry, \r\n          1.0, \r\n          radians(\"angle\"-90))\r\
-        \n        ),\r\n   1.0,\r\n   0\r\n)",
+    EXPRESSION = newexpression,
     OUTPUT_GEOMETRY = 1
   )
+
   qgis_extract_output(profiles)
   gbe <- sf::st_as_sf(profiles)
   gbe[["line_id"]] <- 1:nrow(gbe)#defining line_ad as field
@@ -55,7 +67,6 @@ minpoint <- function(raster, tracks, distance_points_along_line = 1) {
   pfl <- sf::st_as_sf(sagaPFL)
 
 
-  p <- plot(pfl)
-  return(p)
+
 }
 

@@ -10,7 +10,7 @@
 #' @export
 #'
 #' @examples
-minpoint <- function(raster, tracks, distance_points_along_line = 1, profilelength = 1) {
+minpoint <- function(raster, tracks, distance_points_along_line = 1, profilelength = 1, distancecrossprofilepoints = 0.05) {
 
 
 
@@ -61,12 +61,41 @@ minpoint <- function(raster, tracks, distance_points_along_line = 1, profileleng
   sagaPFL <- qgis_run_algorithm(
     algorithm = "native:pointsalonglines",
     INPUT = gbe,
-    DISTANCE = 0.05 #in meters
+    DISTANCE = distancecrossprofilepoints #in meters
   )
   qgis_extract_output(sagaPFL)
   pfl <- sf::st_as_sf(sagaPFL)
 
+  #buffer around points along vertical lines = BVL
+  bufferedpoints <- sf::st_buffer(pfl, 0.001, endCapStyle = "ROUND", joinStyle = "ROUND")
 
+  #join attributes by location
+
+  joinedL <- st_join(bufferedpoints, gbe, left = T)#until here the package worked 25.03.2024
+
+  # recreate center points of buffers to later add the DSM data
+
+  centerpoints <- sf::st_centroid(joinedL)
+
+
+  dsmpoints <- terra::extract(raster,centerpoints)
+  centerpoints$z <- dsmpoints[, -1]
+
+  #categorial statistics
+
+  catstats <- qgis_run_algorithm(
+    algorithm = "qgis:statisticsbycategories",
+    INPUT = centerpoints,
+    VALUES_FIELD_NAME = "z",
+    CATEGORIES_FIELD_NAME = "line_id"
+
+  )
+  s <- qgis_extract_output(catstats)
+  stats <- sf::st_as_sf(s)
+
+
+
+  return(stats)
 
 }
 

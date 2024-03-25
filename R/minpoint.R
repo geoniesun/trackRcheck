@@ -1,5 +1,15 @@
 
 
+#' Calculating the lowest points along the track
+#'
+#' @param raster a dsm.tif file
+#' @param tracks a sf file
+#' @param distance_points_along_line default is 1
+#'
+#' @return
+#' @export
+#'
+#' @examples
 minpoint <- function(raster, tracks, distance_points_along_line = 1) {
 
 
@@ -44,5 +54,8 @@ minpoint <- function(raster, tracks, distance_points_along_line = 1) {
   qgis_extract_output(sagaPFL)
   pfl <- sf::st_as_sf(sagaPFL)
 
+
+  p <- plot(pfl)
+  return(p)
 }
 

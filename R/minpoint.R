@@ -20,8 +20,13 @@
 
 minpoint <- function(raster, tracks, distance_points_along_line = 1, profilelength = 1, distancecrossprofilepoints = 0.05) {
 
+checkFunction <- function() {
+  user_input <- readline("Are you sure your Tracks-Layer provides the needed conditions for this function? (y/n)")
+  if(user_input != "y") stop("Exiting since you did not press y")
+  print("You can adjust you column names and try again")
+}
 
-
+checkFunction()
 
   #points along geometry = PAG
   result <- qgis_run_algorithm(

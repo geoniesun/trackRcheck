@@ -4,7 +4,13 @@
 \alias{minpoint}
 \title{Calculating the lowest points along the track}
 \usage{
-minpoint(raster, tracks, distance_points_along_line = 1)
+minpoint(
+  raster,
+  tracks,
+  distance_points_along_line = 1,
+  profilelength = 1,
+  distancecrossprofilepoints = 0.05
+)
 }
 \arguments{
 \item{raster}{a dsm.tif file}

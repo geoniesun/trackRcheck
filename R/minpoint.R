@@ -99,29 +99,31 @@ minpoint <- function(raster, tracks, distance_points_along_line = 1, profileleng
 
   #categorial statistics
 
- # catstats <- qgis_run_algorithm(
-   # algorithm = "qgis:statisticsbycategories",
-   # INPUT = centerpoints,
-   # VALUES_FIELD_NAME = "z",
-   # CATEGORIES_FIELD_NAME = "line_id"
+ catstats <- qgis_run_algorithm(
+    algorithm = "qgis:statisticsbycategories",
+    INPUT = centerpoints,
+    VALUES_FIELD_NAME = "z",
+    CATEGORIES_FIELD_NAME = "line_id"
+
+  )
+
+ s <- qgis_extract_output(catstats)
+ stats <- sf::st_as_sf(s)
 
 
+ #join attributs from points layer with dsm info by line_id and min(z)
+ pointsandstats <- dplyr::left_join(centerpoints, stats, by = "line_id")
 
 
- # )
+ #select objects where Z value is the same as minimum value (so we only have the minimum object of the profiles)
+ selected <- pointsandstats[pointsandstats$z == pointsandstats$min,]
 
 
-
-  return(centerpoints)
+  return(selected)
 
 }
 
-centerpoints <- centerpoints %>%
- # dplyr::select(-line_id.y) %>%
-  dplyr::rename(line_id = line_id.x)
 
-s <- qgis_extract_output(catstats)
-stats <- sf::st_as_sf(s)
 
 
 

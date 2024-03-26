@@ -5,11 +5,19 @@
 #' @param raster a dsm.tif file
 #' @param tracks a sf file
 #' @param distance_points_along_line default is 1
-#'
+#' @param profilelength
+#' @param distancecrossprofilepoints
+
+
 #' @return
 #' @export
 #'
 #' @examples
+
+
+
+
+
 minpoint <- function(raster, tracks, distance_points_along_line = 1, profilelength = 1, distancecrossprofilepoints = 0.05) {
 
 
@@ -118,13 +126,13 @@ minpoint <- function(raster, tracks, distance_points_along_line = 1, profileleng
  #select objects where Z value is the same as minimum value (so we only have the minimum object of the profiles)
  selected <- pointsandstats[pointsandstats$z == pointsandstats$min,]
 
+ selected <- selected[,c("class_id","fade_scr","line_id","z","min","stddev","median", "mean")]
 
-  return(selected)
+ st_write(selected, "minimumpoints.gpkg", driver = "GPKG")
+
+
+
+  return("You now have a GPKG Layer with minimumpoints along your track in your outputfolder")
 
 }
 
-
-
-
-
-minpoint(raster,tracks)

@@ -23,7 +23,7 @@ readTrack <- function(yourTracksPath = "C:/eagle/trackRcheck/exampledata_nouploa
      message("Next step will be easier if you named the output as 'tracks'. If you did already, great!")
      return(thetracks)
    } else {
-     message("Column names are not as expected. They can be changed but need to be already in this order:")
+     message("Column names are not as expected. They can be changed but need to be already in this order 'track class, fade score, geometry'")
      adjust_names <- readline(prompt = "Do you want to adjust the column names? (y/n): ")
      if (tolower(adjust_names) == "y") {
        new_colnames <- c("class_id", "fade_scr", "geom")
@@ -31,7 +31,9 @@ readTrack <- function(yourTracksPath = "C:/eagle/trackRcheck/exampledata_nouploa
        message("You successfully changed your column names.")
        return(thetracks)
      } else {
-       stop("Exiting. Please make sure the column names match the expected names.")
+
+       message("Exiting. Please make sure the column names match the expected names. Check out how your structure at the moment:")
+       return(str(thetracks))
      }
 
 

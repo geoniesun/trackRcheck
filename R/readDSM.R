@@ -28,3 +28,4 @@ readDSM <- function(yourDSMpath = "C:/eagle/trackRcheck/exampledata_noupload/dsm
 
 }
 dsm <- readDSM()
+raster <- readDSM()

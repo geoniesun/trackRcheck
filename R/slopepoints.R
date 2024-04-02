@@ -3,7 +3,7 @@ slopepoints <- function(raster, tracks, distance_points_along_line = 1, profilel
 
   checkFunction <- function() {
     user_input <- readline("Are you sure your Tracks-Layer provides the needed conditions for this function? (y/n)")
-    if(user_input != "y") stop("Exiting since you did not press y.You can adjust you column names and try again")
+    if(user_input != "y") stop("Exiting since you did not press y. You can adjust you column names and try again")
 
   }
 
@@ -91,6 +91,10 @@ slopepoints <- function(raster, tracks, distance_points_along_line = 1, profilel
   # adding the slope values to the points
   slopepoints <- terra::extract(slope,centerpoints)
   centerpoints$slope <- slopepoints[, -1]
+  #adding dsm values for bringing it together later
+  dsmpoints <- terra::extract(raster,centerpoints)
+  centerpoints$z <- dsmpoints[, -1]
+
 
 
 
@@ -161,17 +165,17 @@ slopepoints <- function(raster, tracks, distance_points_along_line = 1, profilel
   )
 
   su <- qgis_extract_output(upperstats)
-  stats <- sf::st_as_sf(su)
+  stats_up <- sf::st_as_sf(su)
 
   sd <- qgis_extract_output(downerstats)
-  stats <- sf::st_as_sf(sd)
+  stats_down <- sf::st_as_sf(sd)
 
 
 
 
   #join attributs from points layer with dsm info by line_id and min(z)
-  slope_up_stats <- dplyr::left_join(upperslope, stats, by = "line_id")
-  slope_down_stats <- dplyr::left_join(downerslope, stats, by = "line_id")
+  slope_up_stats <- dplyr::left_join(upperslope, stats_up, by = "line_id")
+  slope_down_stats <- dplyr::left_join(downerslope, stats_down, by = "line_id")
 
 
 
@@ -182,8 +186,16 @@ st_write(slope_up_stats, "upperslope.gpkg", append=F)
 st_write(slope_down_stats, "downerslope.gpkg", append=F)
 
 
+#select objects where slope value is the same as max value (so we only have the max slope object of the profiles)
+selected_up <- slope_up_stats[slope_up_stats$slope == slope_up_stats$max,]
+selected_down <- slope_down_stats[slope_down_stats$slope == slope_down_stats$max,]
 
-  return(pointsandstats)
+selected_up <- selected_up[,c("class_id","fade_scr","line_id","slope","max")]
+selected_down <- selected_down[,c("class_id","fade_scr","line_id","slope","max")]
+
+st_write(selected_up, "side1_extent.gpkg", driver = "GPKG")
+st_write(selected_down, "side2_extent.gpkg", driver = "GPKG")
+
 
 }
 

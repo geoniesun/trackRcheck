@@ -18,12 +18,11 @@
 
 
 
-minpoint <- function(raster, tracks, distance_points_along_line = 1, profilelength = 1, distancecrossprofilepoints = 0.05) {
+minpoint <- function(raster, tracks, distance_points_along_line = 1, profilelength = 1, distancecrossprofilepoints = 0.05, st_dev = 0.06) {
 
 checkFunction <- function() {
   user_input <- readline("Are you sure your Tracks-Layer provides the needed conditions for this function? (y/n)")
   if(user_input != "y") stop("Exiting since you did not press y")
-  print("You can adjust you column names and try again")
 }
 
 checkFunction()
@@ -130,8 +129,9 @@ checkFunction()
 
  #select objects where Z value is the same as minimum value (so we only have the minimum object of the profiles)
  selected <- pointsandstats[pointsandstats$z == pointsandstats$min,]
-
+ selected <- selected[selected$stddev > st_dev,]
  selected <- selected[,c("class_id","fade_scr","line_id","z","min","stddev","median", "mean")]
+
 
  st_write(selected, "minimumpoints.gpkg", driver = "GPKG")
 

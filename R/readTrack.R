@@ -6,7 +6,7 @@
 #' @export
 #'
 #' @examples
-readTrack <- function(yourTracksPath = "C:/eagle/trackRcheck/exampledata_noupload/testtrack.gpkg") {
+readTrack <- function(yourTracksPath = "C:/eagle/trackRcheck/exampledata_noupload/wide_track.gpkg") {
 
   if(!file.exists(yourTracksPath)) stop("Track file does not exist. The file you tried to import: ", yourTracksPath, call = FALSE)
   #TASK: converting to gpkg to be included here

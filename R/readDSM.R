@@ -19,7 +19,7 @@ readDSM <- function(yourDSMpath = "C:/eagle/trackRcheck/exampledata_noupload/dsm
   if(format == "TIFF") {
     message("Next step will be easier if you named the output as 'raster'. If you did already, great!")
 
-    raster <- terra::rast(yourDSMpath)
+    dsm <- terra::rast(yourDSMpath)
 
   }
 
@@ -27,4 +27,4 @@ readDSM <- function(yourDSMpath = "C:/eagle/trackRcheck/exampledata_noupload/dsm
 
 
 }
-raster <- readDSM()
+dsm <- readDSM()
